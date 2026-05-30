@@ -69,7 +69,7 @@ class DeepSeekAnalyzer:
         """
         prompt = f"""Analyze the following user input and determine the content theme/category.
 
-User input: "{keywords}"
+User input: \"{keywords}\"
 
 Please provide:
 1. Main category (must be one of: music, dance, comedy, sports, education, lifestyle, tech, beauty, food, travel, art, gaming, crypto, business, other)
@@ -81,12 +81,12 @@ Please provide:
 
 Format your response as JSON with these exact keys:
 {{
-    "category": "category_name",
-    "keywords": ["keyword1", "keyword2", ...],
-    "hashtags": ["hashtag1", "hashtag2", ...],
-    "blacklist_keywords": ["bad1", "bad2", ...],
-    "confidence": 0.95,
-    "description": "Brief description"
+    \"category\": \"category_name\",
+    \"keywords\": [\"keyword1\", \"keyword2\", ...],
+    \"hashtags\": [\"hashtag1\", \"hashtag2\", ...],
+    \"blacklist_keywords\": [\"bad1\", \"bad2\", ...],
+    \"confidence\": 0.95,
+    \"description\": \"Brief description\"
 }}
 
 Only respond with valid JSON, no other text."""
@@ -155,61 +155,6 @@ Only respond with valid JSON, no other text."""
             confidence=0.5,
             description=f"Auto-detected from user input: {keywords}"
         )
-    
-    def refine_analysis(self, keywords: str, user_feedback: str) -> AnalysisResult:
-        """
-        Refine analysis based on user feedback
-        
-        Args:
-            keywords: Original keywords
-            user_feedback: User's feedback/corrections
-        
-        Returns:
-            Refined AnalysisResult
-        """
-        prompt = f"""Refine the content theme analysis based on user feedback.
-
-Original input: "{keywords}"
-User feedback: "{user_feedback}"
-
-Please provide updated:
-1. Main category (must be one of: music, dance, comedy, sports, education, lifestyle, tech, beauty, food, travel, art, gaming, crypto, business, other)
-2. Relevant keywords (list 5-10)
-3. Popular hashtags (list 5-10 without the #)
-4. Content to avoid/blacklist (list 3-5 keywords)
-5. Confidence level (0.0-1.0)
-6. Brief description
-
-Format as JSON with keys: category, keywords, hashtags, blacklist_keywords, confidence, description
-Only respond with valid JSON, no other text."""
-        
-        try:
-            response = self._call_deepseek_api(prompt)
-            return self._parse_response(response, keywords)
-        except Exception as e:
-            print(f"Error refining analysis: {e}")
-            return self._create_fallback_result(keywords)
-    
-    def batch_analyze(self, keywords_list: List[str]) -> List[Tuple[str, AnalysisResult]]:
-        """
-        Analyze multiple keyword sets
-        
-        Args:
-            keywords_list: List of keyword strings
-        
-        Returns:
-            List of (keywords, AnalysisResult) tuples
-        """
-        results = []
-        for keywords in keywords_list:
-            try:
-                result = self.analyze_keywords(keywords)
-                results.append((keywords, result))
-            except Exception as e:
-                print(f"Error analyzing '{keywords}': {e}")
-                results.append((keywords, self._create_fallback_result(keywords)))
-        
-        return results
 
 
 class HybridAnalyzer:
